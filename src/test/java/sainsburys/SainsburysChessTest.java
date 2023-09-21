@@ -43,7 +43,6 @@ public class SainsburysChessTest {
     @Order(2)
     @DisplayName("Test 2 -  Boundary bounce")
     public void secondGame() {
-        System.out.println("TEST TWO - testing first bounces");
         final String EXPECTED = "4c";
 
         String endPosition = sainsburysChess.playChess(SECOND_GAME_START_POSITION, SECOND_GAME_ROW_MOVES, SECOND_GAME_COLUMN_MOVES);
@@ -55,7 +54,6 @@ public class SainsburysChessTest {
     @Order(3)
     @DisplayName("Test 2 -  Multiple boundary bounce")
     public void thirdGame() {
-        System.out.println("TEST THREE - testing multiple bounces");
         final String EXPECTED = "6e";
 
         String endPosition = sainsburysChess.playChess(THIRD_GAME_START_POSITION, THIRD_GAME_ROW_MOVES, THIRD_GAME_COLUMN_MOVES);

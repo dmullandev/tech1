@@ -2,22 +2,31 @@ package sainsburys;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SainsburysChess {
 
-    private static final Map<String, Integer> columnMapping = new HashMap<>();
+    private static final Logger LOG = LoggerFactory.getLogger(SainsburysChess.class);
+
+    private static final Map<String, Integer> columnMappingKeyString = new HashMap<>();
+    private static Map<Integer, String> columnMappingKeyInteger = new HashMap<>();
 
     private static int boundary = 8;
 
     private static void setUp() {
-        columnMapping.put("a", 1);
-        columnMapping.put("b", 2);
-        columnMapping.put("c", 3);
-        columnMapping.put("d", 4);
-        columnMapping.put("e", 5);
-        columnMapping.put("f", 6);
-        columnMapping.put("g", 7);
-        columnMapping.put("h", 8);
+        columnMappingKeyString.put("a", 1);
+        columnMappingKeyString.put("b", 2);
+        columnMappingKeyString.put("c", 3);
+        columnMappingKeyString.put("d", 4);
+        columnMappingKeyString.put("e", 5);
+        columnMappingKeyString.put("f", 6);
+        columnMappingKeyString.put("g", 7);
+        columnMappingKeyString.put("h", 8);
+
+        columnMappingKeyInteger = columnMappingKeyString.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
     }
 
     public static String playChess(String startPosition, int rowMoves, int columnMoves) {
@@ -26,37 +35,34 @@ public class SainsburysChess {
         // rowMoves example: 4
         setUp();
 
-        int rowPosition = findTargetPosition(startPosition, rowMoves, Boolean.TRUE);
-        int columnPosition = findTargetPosition(startPosition, columnMoves, Boolean.FALSE);
-
-        System.out.println("Final row position: " + rowPosition);
-        System.out.println("Final column position: " + columnPosition);
+        int rowPosition = findTargetPosition(startPosition, rowMoves, true);
+        int columnPosition = findTargetPosition(startPosition, columnMoves, false);
+        LOG.info("Endposition - Row: {}", rowPosition);
+        LOG.info("Endposition - Column: {}", rowPosition);
 
         String endPosition = buildEndPosition(rowPosition, columnPosition);
-        System.out.println("Returning endPosition: " + endPosition);
+        LOG.info("Endposition - Combined: {}", endPosition);
         return endPosition;
     }
 
     private static int findTargetPosition(String startPosition, int moves, boolean movingRow) {
-        System.out.println("");
-        System.out.println("=== Calculating ===");
-        System.out.println("Startposition: '" + startPosition + "' moves: '" + moves + "' movingRow: '" + movingRow + "'");
+        LOG.info("Start Position: {} Total Moves: {}", startPosition, moves);
         int originalPosition;
         int currentPosition;
         boolean normalDirection = true;
 
         if (movingRow == true) {
-            originalPosition = Integer.parseInt(startPosition.substring(0, 1));
-            System.out.println("Mode: Row");
+            originalPosition = Integer.parseInt(String.valueOf(startPosition.charAt(0)));
+            LOG.info("Mode: Row");
         } else {
-            originalPosition = columnMapping.get(startPosition.substring(1, 2));
-            System.out.println("Mode: Column");
+            originalPosition = columnMappingKeyString.get(String.valueOf(startPosition.charAt(1)));
+            LOG.info("Mode: Column");
         }
+
         currentPosition = originalPosition;
-        System.out.println("Original position: " + currentPosition);
 
         while (true) {
-            System.out.println("Current position: " + currentPosition);
+            LOG.info("Current Position: {}", currentPosition);
             if (moves == 0) {
                 break;
             }
@@ -77,14 +83,12 @@ public class SainsburysChess {
             }
             moves--;
         }
-        System.out.println("=== Finished Calculating ===");
-        System.out.println("");
         return currentPosition;
     }
 
     private static String buildEndPosition(int row, int column) {
 
-        return "" + row + columnMapping.entrySet().stream().filter(entry -> entry.getValue() == column).map(entry -> entry.getKey()).findFirst().get();
+        return "" + row + columnMappingKeyInteger.get(column);
     }
 
 }
